@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * 设计系统：Minimalism & Swiss Style · 黑白单色（ui-ux-pro-max 生成）
+ * 石黑色系（stone）：白卡 + 浅灰底 + 近黑主色；无渐变、无阴影，结构靠 border 与色块分层。
+ * 红色仅保留给 destructive（延期 / 硬节点 / 里程碑任务），其余状态一律用灰阶表达。
+ * 圆角收紧：radius 0.5rem —— 面板 8px、行内元素 6px、徽章/甘特条 4px。
+ */
+@layer base {
+  :root {
+    --background: 60 5% 98%;
+    --foreground: 24 10% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 5%;
+    --primary: 24 10% 10%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 6% 94%;
+    --secondary-foreground: 24 8% 28%;
+    --muted: 30 6% 95%;
+    --muted-foreground: 25 5% 45%;
+    --accent: 30 6% 93%;
+    --accent-foreground: 24 10% 15%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 24 10% 10%;
+    --warning: 25 5% 40%;
+    --info: 25 5% 55%;
+    --border: 30 7% 86%;
+    --input: 30 6% 82%;
+    --ring: 24 10% 10%;
+    --gantt-future: 30 5% 84%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.15);
+  }
+}
+
+/* 甘特图今日基准线 */
+.today-line {
+  position: absolute;
+  top: -6px;
+  bottom: 0;
+  width: 2px;
+  background: hsl(var(--foreground));
+  z-index: 20;
+}
+.today-line::after {
+  content: '今天';
+  position: absolute;
+  top: -3px;
+  left: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+.gantt-row {
+  transition: background 0.15s;
+}
+.gantt-row:hover {
+  background: hsl(var(--accent) / 0.5);
+}
+.gantt-row.selected {
+  background: hsl(var(--accent) / 0.8);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+/* 里程碑高亮流动边框：SVG 圆角矩形 + stroke-dashoffset 匀速扫光 */
+.beam-rect {
+  fill: none;
+  stroke: hsl(0 0% 100%);
+  stroke-width: 2;
+  stroke-dasharray: 16 84;
+  filter:
+    drop-shadow(0 0 2px hsl(0 0% 100% / 0.95))
+    drop-shadow(0 0 6px hsl(var(--primary) / 0.85));
+  animation: beam-run 2.6s linear infinite;
+}
+@keyframes beam-run {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* 入场动画（左下角设置可选择关闭/轻微/丰富） */
+[data-anim='lite'] .stagger > *,
+[data-anim='full'] .stagger > * {
+  animation: fade-up 0.45s ease both;
+}
+.stagger > *:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.stagger > *:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.stagger > *:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.stagger > *:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.stagger > *:nth-child(6) {
+  animation-delay: 0.25s;
+}
+.stagger > *:nth-child(7) {
+  animation-delay: 0.3s;
+}
+.stagger > *:nth-child(8) {
+  animation-delay: 0.35s;
+}
+[data-anim='full'] .stagger-full > * {
+  animation: fade-up 0.4s ease both;
+}
+.stagger-full > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.stagger-full > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.stagger-full > *:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.stagger-full > *:nth-child(4) {
+  animation-delay: 0.25s;
+}
+.stagger-full > *:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.stagger-full > *:nth-child(6) {
+  animation-delay: 0.35s;
+}
+.stagger-full > *:nth-child(7) {
+  animation-delay: 0.4s;
+}
+.stagger-full > *:nth-child(8) {
+  animation-delay: 0.45s;
+}
+.stagger-full > *:nth-child(9) {
+  animation-delay: 0.5s;
+}
+.stagger-full > *:nth-child(n + 10) {
+  animation-delay: 0.55s;
+}
+
+/* 光点粒子：从里程碑飞向光瓶 */
+.light-dot {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 9999px;
+  background: hsl(0 0% 100%);
+  box-shadow:
+    0 0 6px 2px hsl(var(--primary) / 0.55),
+    0 0 14px 4px hsl(var(--primary) / 0.25);
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* 光瓶收到光点时的脉冲 */
+@keyframes bottle-pulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  35% {
+    transform: scale(1.06);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+.bottle-pulse {
+  animation: bottle-pulse 0.8s ease;
+}
+
+/* 星瓶待机浮动 */
+@keyframes star-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+.star-float {
+  animation: star-float 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
